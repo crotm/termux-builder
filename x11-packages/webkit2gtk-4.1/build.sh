@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://webkitgtk.org
 TERMUX_PKG_DESCRIPTION="A full-featured port of the WebKit rendering engine"
 TERMUX_PKG_LICENSE="LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.52.1"
+TERMUX_PKG_VERSION="2.52.4"
 TERMUX_PKG_SRCURL="https://webkitgtk.org/releases/webkitgtk-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256=238e7d53205b14004add7eeb4293c94d6fbf7097b3efef7cee5519e5c121a904
+TERMUX_PKG_SHA256=cf4076a1ca2a64788edca8c452d8ebb68d5e2965e588fe46a388a016513edce4
 TERMUX_PKG_DEPENDS="atk, enchant, fontconfig, freetype, glib, gst-plugins-bad, gst-plugins-base, gst-plugins-good, gstreamer, gtk3, harfbuzz, harfbuzz-icu, libavif, libc++, libcairo, libdrm, libgcrypt, libhyphen, libicu, libjpeg-turbo, libpng, libsoup3, libtasn1, libwebp, libxml2, libx11, libxcomposite, libxdamage, libxslt, libxt, littlecms, openjpeg, pango, woff2, zlib"
 TERMUX_PKG_BUILD_DEPENDS="g-ir-scanner, xorgproto"
 TERMUX_PKG_VERSIONED_GIR=false
@@ -33,6 +33,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DENABLE_SPEECH_SYNTHESIS=OFF
 -DUSE_LIBBACKTRACE=OFF
 -DUSE_SYSTEM_SYSPROF_CAPTURE=OFF
+-DUSE_SYSTEM_MALLOC=ON
 "
 
 termux_step_post_get_source() {
