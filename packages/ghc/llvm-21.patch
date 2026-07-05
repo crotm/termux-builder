@@ -1,0 +1,11 @@
+--- ghc-9.12.1/configure.ac	2024-12-16 00:59:45.000000000 +0530
++++ ghc-9.12.1.mod/configure.ac	2026-07-05 20:45:07.766048057 +0530
+@@ -528,7 +528,7 @@
+ # versions of LLVM simultaneously, but that stopped working around
+ # 3.5/3.6 release of LLVM.
+ LlvmMinVersion=13  # inclusive
+-LlvmMaxVersion=20  # not inclusive
++LlvmMaxVersion=22  # not inclusive
+ AC_SUBST([LlvmMinVersion])
+ AC_SUBST([LlvmMaxVersion])
+ 
