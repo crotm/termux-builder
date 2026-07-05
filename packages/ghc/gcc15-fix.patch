@@ -1,0 +1,19 @@
+--- ghc-9.12.1/utils/hp2ps/Utilities.c	2024-12-16 00:59:47.000000000 +0530
++++ ghc-9.12.1.mod/utils/hp2ps/Utilities.c	2026-07-05 20:20:48.417751049 +0530
+@@ -3,7 +3,7 @@
+ #include <string.h>
+ #include "Error.h"
+ 
+-extern void* malloc();
++#include <stdlib.h>
+ 
+ char*
+ Basename(char *name)
+@@ -89,7 +89,6 @@
+ xrealloc(void *p, size_t n)
+ {
+     void *r;
+-    extern void *realloc();
+ 
+     r = realloc(p, n);
+     if (!r) {
