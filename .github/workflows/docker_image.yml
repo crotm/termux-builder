@@ -58,11 +58,12 @@ jobs:
       run: |
         docker build --tag excedrin/termux-builder:latest scripts/
         docker tag excedrin/termux-builder:latest ghcr.io/crotm/termux-builder:latest
+
     - name: Build (CGCT)
       if: ${{ steps.skip-build.outputs.skip-build != 'true' }}
       run: |
         docker build --no-cache --tag excedrin/termux-builder-cgct:latest --file scripts/Dockerfile.cgct scripts/
-        docker tag excedrin/termux-builder-cgct:latest ghcr.io/crotm/package-builder-cgct:latest
+        docker tag excedrin/termux-builder-cgct:latest ghcr.io/crotm/termux-builder-cgct:latest
     - name: Login to GHCR
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'crotm/termux-builder' && steps.skip-build.outputs.skip-build != 'true'
 
