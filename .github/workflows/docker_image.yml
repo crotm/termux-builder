@@ -80,21 +80,27 @@ jobs:
     - name: Push
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'crotm/termux-builder' && steps.skip-build.outputs.skip-build != 'true'
       run: |
-        # ghcr.io seem to be unstable sometimes. It may suddenly drop connection
-        # during docker push when some layers are already uploaded. The workaround
-        # is to retry again 1 or 2 more times.
-        for registry in "ghcr.io/" ""; do
-          for image in termux-builder termux-builder-cgct; do
-            for t in 1 2 3; do
-              if docker push "${registry}crotm/${image}:latest"; then
-                break
-              else
-                if [ "$t" = "3" ]; then
-                  echo "Giving up after 3 attempts"
-                  exit 1
-                fi
-                sleep 20
+        # Define the two full image paths to push
+        # We push to GHCR (crotm) and Docker Hub (excedrin)
+        IMAGES=(
+          "ghcr.io/crotm/termux-builder:latest"
+          "ghcr.io/crotm/termux-builder-cgct:latest"
+          "excedrin/termux-builder:latest"
+          "excedrin/termux-builder-cgct:latest"
+        )
+
+        for img in "${IMAGES[@]}"; do
+          echo "Pushing $img..."
+          for t in 1 2 3; do
+            if docker push "$img"; then
+              break
+            else
+              if [ "$t" = "3" ]; then
+                echo "Giving up after 3 attempts on $img"
+                exit 1
               fi
-            done
+              echo "Push failed, retrying in 20s..."
+              sleep 20
+            fi
           done
         done
