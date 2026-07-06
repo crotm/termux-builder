@@ -57,7 +57,7 @@ jobs:
       if: ${{ steps.skip-build.outputs.skip-build != 'true' }}
       run: |
         docker build --tag excedrin/termux-builder:latest scripts/
-        docker tag excedrin/termux-builder:latest ghcr.io/crotm/package-builder:latest
+        docker tag excedrin/termux-builder:latest ghcr.io/crotm/termux-builder:latest
     - name: Build (CGCT)
       if: ${{ steps.skip-build.outputs.skip-build != 'true' }}
       run: |
