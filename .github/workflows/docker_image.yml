@@ -86,7 +86,7 @@ jobs:
         for registry in "ghcr.io/" ""; do
           for image in termux-builder termux-builder-cgct; do
             for t in 1 2 3; do
-              if docker push "${registry}excedrin/${image}:latest"; then
+              if docker push "${registry}crotm/${image}:latest"; then
                 break
               else
                 if [ "$t" = "3" ]; then
