@@ -76,3 +76,4 @@ yes | $SDK_MANAGER --sdk_root="$ANDROID_HOME" \
 		"platforms;android-35" \
 		"platforms;android-28" \
 		"platforms;android-24"
+bash setup-clang.sh
