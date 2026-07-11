@@ -34,7 +34,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	su - builder -c "rm ~/lib/*.zip" && \
 	su - builder -c "rm -r ~/.android/cache/"
-
+RUN bash /tmp/termux-packages/scripts/setup-clang.sh
 # Switch User
 USER builder:builder
 
