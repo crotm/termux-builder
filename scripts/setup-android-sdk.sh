@@ -76,5 +76,3 @@ yes | $SDK_MANAGER --sdk_root="$ANDROID_HOME" \
 		"platforms;android-35" \
 		"platforms;android-28" \
 		"platforms;android-24"
-export NDK="/home/builder/lib/android-ndk-r29"
-bash /tmp/termux-packages/scripts/setup-clang.sh
