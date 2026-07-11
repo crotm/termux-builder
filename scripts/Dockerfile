@@ -3,7 +3,7 @@
 # Push to GitHub registry with:
 #	docker push ghcr.io/termux/package-builder
 # This is done after changing this file or any of the
-# scripts/setup-{ubuntu,android-sdk,cgct}.sh setup scripts.
+# scripts/setup-{ubuntu,android-sdk,clang,cgct}.sh setup scripts.
 FROM ubuntu:26.04
 
 # Fix locale to avoid warnings:
@@ -28,14 +28,13 @@ RUN apt-get update && \
 	chmod a+rx /tmp/termux-packages/scripts/*.sh /tmp/termux-packages/scripts/build/termux_download.sh && \
 	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-ubuntu.sh" && \
 	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-android-sdk.sh" && \
+	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-clang.sh" && \
 	# Removed unused parts to make a smaller Docker image:
 	apt-get remove -yq --autoremove lsb-release software-properties-common && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* && \
 	su - builder -c "rm ~/lib/*.zip" && \
 	su - builder -c "rm -r ~/.android/cache/"
-RUN bash /tmp/termux-packages/scripts/setup-clang.sh
-# Switch User
 USER builder:builder
 
 # We expect this to be mounted with '-v $PWD:/home/builder/termux-packages':
