@@ -5,12 +5,13 @@ set -e -u
 
 # Define the version internally as requested
 export CLANG_VERSION=clang-r596125
+export ANDROID_HOME="/home/builder/lib/android-sdk-9123335"
 
 # Ensure NDK path is known
-: "${ANDROID_HOME:?NDK environment variable must be set. Please run this from the main build script or export NDK path.}"
+: "${ANDROID_HOME:?ANDROID_HOME environment variable must be set. Please run this from the main build script or export NDK path.}"
 
 echo "--- Starting Clang Setup (Android 17 / Cinnamon Bun Era) ---"
-echo "NDK Path: $ANDROID_HOME"
+echo "ANDROID_HOME Path: $ANDROID_HOME"
 echo "Clang Version: $CLANG_VERSION"
 
 LLVM_PATH="${ANDROID_HOME}/toolchains/llvm/prebuilt/linux-x86_64"
@@ -28,7 +29,7 @@ cd "$CLANG_TMP"
 git sparse-checkout set "$CLANG_VERSION"
 
 # 3. Move the new Clang into the NDK
-echo "Installing Clang to NDK..."
+echo "Installing Clang to ANDROID_HOME..."
 mv "$CLANG_VERSION"/* "$LLVM_PATH/"
 cd /
 rm -rf "$CLANG_TMP"
