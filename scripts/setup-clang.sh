@@ -7,13 +7,13 @@ set -e -u
 export CLANG_VERSION=clang-r596125
 
 # Ensure NDK path is known
-: "${NDK:?NDK environment variable must be set. Please run this from the main build script or export NDK path.}"
+: "${ANDROID_HOME:?NDK environment variable must be set. Please run this from the main build script or export NDK path.}"
 
 echo "--- Starting Clang Setup (Android 17 / Cinnamon Bun Era) ---"
-echo "NDK Path: $NDK"
+echo "NDK Path: $ANDROID_HOME"
 echo "Clang Version: $CLANG_VERSION"
 
-LLVM_PATH="${NDK}/toolchains/llvm/prebuilt/linux-x86_64"
+LLVM_PATH="${ANDROID_HOME}/toolchains/llvm/prebuilt/linux-x86_64"
 
 # 1. Clear existing LLVM prebuilts (except sysroot)
 # This removes the default Clang that came with the NDK zip
