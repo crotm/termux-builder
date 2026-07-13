@@ -1,7 +1,7 @@
 # Build with:
-#	docker build -t ghcr.io/termux/package-builder .
+#	docker build -t ghcr.io/crotm/termux-builder .
 # Push to GitHub registry with:
-#	docker push ghcr.io/termux/package-builder
+#	docker push ghcr.io/crotm/termux-builder
 # This is done after changing this file or any of the
 # scripts/setup-{ubuntu,android-sdk,clang,cgct}.sh setup scripts.
 FROM ubuntu:26.04
@@ -35,6 +35,19 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	su - builder -c "rm ~/lib/*.zip" && \
 	su - builder -c "rm -r ~/.android/cache/"
+
+# Keep in sync with TERMUX_SDK_REVISION and TERMUX_NDK_VERSION in
+# scripts/properties.sh (the check below fails the build on drift):
+ENV ANDROID_HOME=/home/builder/lib/android-sdk-9123335 \
+    NDK=/home/builder/lib/android-ndk-r29
+
+# Verify the toolchain: paths must exist, clang must run, and the wrapper
+# for the default TERMUX_PKG_API_LEVEL (24) must link a real binary:
+RUN test -d "$ANDROID_HOME/platform-tools" && \
+	"$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" --version && \
+	echo 'int main(void){return 0;}' > /tmp/cc-test.c && \
+	"$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang" /tmp/cc-test.c -o /tmp/cc-test && \
+	rm -f /tmp/cc-test.c /tmp/cc-test
 USER builder:builder
 
 # We expect this to be mounted with '-v $PWD:/home/builder/termux-packages':
