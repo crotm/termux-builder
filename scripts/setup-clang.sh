@@ -13,10 +13,13 @@ CLANG_BRANCH=main-kernel
 # Sets $NDK, the path setup-android-sdk.sh installed the NDK to
 # (respects an already-exported $NDK):
 . "$(cd "$(dirname "$0")"; pwd)/properties.sh"
-ls $NDK
 LLVM_PATH="${NDK}/toolchains/llvm/prebuilt/linux-x86_64"
-echo "----------------"
+
 ls $LLVM_PATH
+echo "----------------"
+ls $LLVM_PATH/bin
+echo "----------------"
+cat $LLVM_PATH/AndroidVersion.txt
 if [ ! -d "$LLVM_PATH/bin" ]; then
 	echo "ERROR: no NDK toolchain at $LLVM_PATH - run setup-android-sdk.sh first" >&2
 	exit 1
@@ -46,6 +49,8 @@ mv "$CLANG_TMP/$CLANG_VERSION"/* "$LLVM_PATH/"
 rm -rf "$CLANG_TMP"
 echo "-----------------"
 ls $LLVM_PATH
+echo "----------------"
+cat $LLVM_PATH/AndroidVersion.txt
 # 3. Regenerate the NDK-style API wrapper scripts (API 21-36). Unlike NDK
 # clang, the AOSP prebuilt has no default sysroot baked in, so the wrappers
 # pass the NDK sysroot explicitly (a --sysroot given later on the command
