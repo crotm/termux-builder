@@ -13,8 +13,9 @@ CLANG_BRANCH=main-kernel
 # Sets $NDK, the path setup-android-sdk.sh installed the NDK to
 # (respects an already-exported $NDK):
 . "$(cd "$(dirname "$0")"; pwd)/properties.sh"
-
+ls $NDK
 LLVM_PATH="${NDK}/toolchains/llvm/prebuilt/linux-x86_64"
+ls $LLVM_PATH
 if [ ! -d "$LLVM_PATH/bin" ]; then
 	echo "ERROR: no NDK toolchain at $LLVM_PATH - run setup-android-sdk.sh first" >&2
 	exit 1
