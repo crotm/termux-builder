@@ -6,18 +6,24 @@ on:
     - master
     paths:
     - 'scripts/Dockerfile'
+    - 'scripts/Dockerfile.cgct'
     - 'scripts/properties.sh'
     - 'scripts/setup-android-sdk.sh'
+    - 'scripts/setup-clang.sh'
     - 'scripts/setup-ubuntu.sh'
     - 'scripts/setup-cgct.sh'
+    - 'scripts/build/termux_download.sh'
     - '.github/workflows/docker_image.yml'
   pull_request:
     paths:
     - 'scripts/Dockerfile'
+    - 'scripts/Dockerfile.cgct'
     - 'scripts/properties.sh'
     - 'scripts/setup-android-sdk.sh'
+    - 'scripts/setup-clang.sh'
     - 'scripts/setup-ubuntu.sh'
     - 'scripts/setup-cgct.sh'
+    - 'scripts/build/termux_download.sh'
     - '.github/workflows/docker_image.yml'
   schedule:
     - cron:  '0 2 * * 0'
@@ -44,7 +50,7 @@ jobs:
       run: |
         LAST_TIMESTAMP=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
          -H "Accept: application/vnd.github+json" \
-         "https://api.github.com/users/termux/packages/container/package-builder/versions" |
+         "https://api.github.com/users/crotm/packages/container/termux-builder/versions" |
           jq --raw-output 'map(select(.metadata.container.tags | contains(["latest"])))[0].created_at')
         LAST_UNIX_TIME=$(date -d "$LAST_TIMESTAMP" +%s)
         CURRENT_UNIX_TIME=$(date +%s)
