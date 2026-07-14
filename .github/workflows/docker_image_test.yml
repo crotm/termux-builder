@@ -1,0 +1,57 @@
+name: Docker image test
+
+on:
+  workflow_run:
+    workflows: ["Docker image"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: >
+      github.repository == 'crotm/termux-builder' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'master'))
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ghcr.io/crotm/termux-builder:latest
+          - ghcr.io/crotm/termux-builder-cgct:latest
+          - excedrin/termux-builder:latest
+          - excedrin/termux-builder-cgct:latest
+    steps:
+    - name: Pull image
+      run: |
+        for t in 1 2 3; do
+          if docker pull ${{ matrix.image }}; then
+            break
+          else
+            if [ "$t" = "3" ]; then
+              echo "Giving up after 3 attempts pulling ${{ matrix.image }}"
+              exit 1
+            fi
+            echo "Pull failed, retrying in 20s..."
+            sleep 20
+          fi
+        done
+
+    - name: Verify image
+      run: |
+        echo "=== Verifying ${{ matrix.image }} ==="
+        docker run --rm "${{ matrix.image }}" bash -c '
+          set -e
+          echo "NDK=$NDK"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          LLVM_BIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          "$LLVM_BIN/clang" --version
+          echo "AOSP clang marker: $(cat "$LLVM_BIN/../AndroidVersion.txt")"
+          echo "API wrappers: $(ls "$LLVM_BIN" | grep -c -- "-clang$") clang + $(ls "$LLVM_BIN" | grep -c -- "-clang++$") clang++"
+          ls -l "$LLVM_BIN/../lib/clang/"
+          echo "int main(void){return 0;}" > /tmp/t.c
+          "$LLVM_BIN/aarch64-linux-android24-clang" /tmp/t.c -o /tmp/t
+          echo "Link test OK"
+        '
