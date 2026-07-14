@@ -38,7 +38,8 @@ fi
 
 # Installing CGCT
 echo "Installing CGCT..."
-curl "${REPO_URL}/cgct.json" -o "${TMPDIR_CGCT}/cgct.json"
+curl --fail --location --proto '=https' --tlsv1.2 \
+	"${REPO_URL}/cgct.json" -o "${TMPDIR_CGCT}/cgct.json"
 for pkgname in ${!CGCT[@]}; do
 	SHA256SUM=$(jq -r '."'$pkgname'"."SHA256SUM"' "${TMPDIR_CGCT}/cgct.json")
 	if [ "$SHA256SUM" = "null" ]; then
@@ -57,7 +58,7 @@ for pkgname in ${!CGCT[@]}; do
 			"${TMPDIR_CGCT}/${filename}" \
 			"${SHA256SUM}"
 	fi
-	tar xJf "${TMPDIR_CGCT}/${filename}" -C / data
+	tar --no-same-owner --no-same-permissions -xJf "${TMPDIR_CGCT}/${filename}" -C / data
 done
 
 # Installing gcc-libs for CGCT
