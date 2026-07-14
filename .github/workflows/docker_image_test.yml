@@ -50,7 +50,7 @@ jobs:
           "$LLVM_BIN/clang" --version
           echo "AOSP clang marker: $(cat "$LLVM_BIN/../AndroidVersion.txt")"
           echo "API wrappers: $(ls "$LLVM_BIN" | grep -c -- "-clang$") clang + $(ls "$LLVM_BIN" | grep -c -- "-clang++$") clang++"
-          find "$LLVM_BIN" -maxdepth 1 -type f | grep -E -- '-clang(\+\+)?$'
+          ls "$LLVM_BIN"
           ls -l "$LLVM_BIN/../lib/clang/"
           echo "int main(void){return 0;}" > /tmp/t.c
           "$LLVM_BIN/aarch64-linux-android24-clang" /tmp/t.c -o /tmp/t
