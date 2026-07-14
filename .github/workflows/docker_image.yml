@@ -70,6 +70,28 @@ jobs:
       run: |
         docker build --no-cache --tag excedrin/termux-builder-cgct:latest --file scripts/Dockerfile.cgct scripts/
         docker tag excedrin/termux-builder-cgct:latest ghcr.io/crotm/termux-builder-cgct:latest
+
+    # Verify INSIDE the images (the env vars only exist in the container,
+    # not on the runner host) before anything is pushed:
+    - name: Verify images
+      if: ${{ steps.skip-build.outputs.skip-build != 'true' }}
+      run: |
+        for img in excedrin/termux-builder:latest excedrin/termux-builder-cgct:latest; do
+          echo "=== Verifying $img ==="
+          docker run --rm "$img" bash -c '
+            set -e
+            echo "NDK=$NDK"
+            echo "ANDROID_HOME=$ANDROID_HOME"
+            LLVM_BIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+            "$LLVM_BIN/clang" --version
+            echo "AOSP clang marker: $(cat "$LLVM_BIN/../AndroidVersion.txt")"
+            echo "API wrappers: $(ls "$LLVM_BIN" | grep -c -- "-clang$") clang + $(ls "$LLVM_BIN" | grep -c -- "-clang++$") clang++"
+            ls -l "$LLVM_BIN/../lib/clang/"
+            echo "int main(void){return 0;}" > /tmp/t.c
+            "$LLVM_BIN/aarch64-linux-android24-clang" /tmp/t.c -o /tmp/t
+            echo "Link test OK"
+          '
+        done
     - name: Login to GHCR
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'crotm/termux-builder' && steps.skip-build.outputs.skip-build != 'true'
 
