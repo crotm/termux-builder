@@ -13,7 +13,7 @@ ENV LANG=en_US.UTF-8
 RUN rm -rf /tmp/termux-packages
 RUN mkdir -p /tmp/termux-packages
 RUN mkdir -p /tmp/termux-packages/scripts
-COPY ./llvm-snapshot.gpg.key ./properties.sh ./setup-android-sdk.sh ./setup-cgct.sh ./setup-clang.sh ./setup-ubuntu.sh /tmp/termux-packages/scripts/
+COPY ./llvm-snapshot.gpg.key ./properties.sh ./setup-android-sdk.sh ./setup-cgct.sh ./setup-clang.sh ./setup-mpdec.sh ./setup-ubuntu.sh /tmp/termux-packages/scripts/
 RUN mkdir -p /tmp/termux-packages/scripts/build
 COPY ./build/termux_download.sh /tmp/termux-packages/scripts/build/
 
@@ -29,6 +29,7 @@ RUN apt-get update && \
 	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-ubuntu.sh" && \
 	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-android-sdk.sh" && \
 	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-clang.sh" && \
+	su - builder -c "TERMUX_PKGS__BUILD__IS_DOCKER_BUILD='true' /tmp/termux-packages/scripts/setup-mpdec.sh" && \
 	# Removed unused parts to make a smaller Docker image:
 	apt-get remove -yq --autoremove lsb-release software-properties-common && \
 	apt-get clean && \

@@ -95,6 +95,9 @@ PACKAGES+=" gegl"
 # Needed by package libidn2.
 PACKAGES+=" gengetopt"
 
+# Host libmpdec, used when building for the host.
+PACKAGES+=" libmpdec-dev"
+
 # Needed by package dbus-glib.
 PACKAGES+=" libdbus-1-dev"
 
