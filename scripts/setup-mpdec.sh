@@ -4,6 +4,15 @@
 
 set -e -u
 
+# Used by termux_download for its temporary download file (same
+# default as setup-android-sdk.sh):
+: "${TERMUX_PKG_TMPDIR:="/tmp"}"
+
+# Sets $NDK, the path setup-android-sdk.sh installed the NDK to
+# (respects an already-exported $NDK):
+. "$(cd "$(dirname "$0")"; pwd)/properties.sh"
+. "$(cd "$(dirname "$0")"; pwd)/build/termux_download.sh"
+
 MPDEC_VERSION=4.0.1
 MPDEC_SHA256=96d33abb4bb0070c7be0fed4246cd38416188325f820468214471938545b1ac8
 MPDEC_URL="https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-${MPDEC_VERSION}.tar.gz"
@@ -13,10 +22,6 @@ MPDEC_URL="https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-${MPDE
 MPDEC_HOST=aarch64-linux-android
 MPDEC_API=24
 
-# Sets $NDK, the path setup-android-sdk.sh installed the NDK to
-# (respects an already-exported $NDK):
-. "$(cd "$(dirname "$0")"; pwd)/properties.sh"
-. "$(cd "$(dirname "$0")"; pwd)/build/termux_download.sh"
 LLVM_PATH="${NDK}/toolchains/llvm/prebuilt/linux-x86_64"
 LLVM_BIN="${LLVM_PATH}/bin"
 
