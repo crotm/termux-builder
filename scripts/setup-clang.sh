@@ -84,9 +84,7 @@ cd "${LLVM_PATH}/bin"
 for arch in aarch64-linux-android armv7a-linux-androideabi i686-linux-android x86_64-linux-android; do
 	for api in $API_LEVELS; do
 		for suffix in clang clang++; do
-			printf '#!/usr/bin/env bash\nbin_dir=$(dirname "$0")\nif [ "$1" != "-cc1" ]; then\n    "$bin_dir/%s" --target=%s%s --sysroot "$bin_dir/../sysroot" "$@"\nelse\n    # Target is already an argument.\n    "$bin_dir/%s" "$@"\nfi\n' \
-				"${suffix}" "${arch}" "${api}" "${suffix}" \
-				> "${arch}${api}-${suffix}"
+			curl -fsSL "https://android.googlesource.com/toolchain/prebuilts/ndk/r27/+/refs/heads/main-kernel/toolchains/llvm/prebuilt/linux-x86_64/bin/${arch}${api}-${suffix}?format=TEXT" | base64 -d > "${arch}${api}-${suffix}"
 			chmod +x "${arch}${api}-${suffix}"
 		done
 	done
