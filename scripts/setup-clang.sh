@@ -75,17 +75,27 @@ if [ "$NDK_CLANG_MAJOR" != "$NEW_CLANG_MAJOR" ]; then
 	echo "Symlinked lib/clang/$NDK_CLANG_MAJOR -> $NEW_CLANG_MAJOR"
 fi
 
-# 3. Regenerate the NDK-style API wrapper scripts for the API levels the
-# sysroot supports. Unlike NDK clang, the AOSP prebuilt has no default
-# sysroot baked in, so the wrappers pass the NDK sysroot explicitly (a
-# --sysroot given later on the command line still takes precedence).
+# 3. Regenerate the NDK-style API wrapper scripts, byte-identical to
+# the ones NDK r27 ships. Generated locally instead of downloaded -
+# gitiles rate-limits the ~120 fetches with HTTP 429, and a failed
+# fetch left an empty wrapper behind. The arches and their API levels
+# are derived from the sysroot, so each arch only gets wrappers for API
+# levels it ships libraries for (e.g. riscv64 is 35-only). No --sysroot
+# is needed: clang's Android driver finds the sysroot at ../sysroot
+# relative to the driver, which the smoke test below verifies.
 echo "Generating API wrappers..."
 cd "${LLVM_PATH}/bin"
-for arch in aarch64-linux-android armv7a-linux-androideabi i686-linux-android x86_64-linux-android; do
-	for api in $API_LEVELS; do
+for arch_dir in "$LLVM_PATH"/sysroot/usr/lib/*-linux-android*; do
+	arch=$(basename "$arch_dir")
+	# The arm wrappers/targets are named armv7a-linux-androideabi,
+	# unlike their arm-linux-androideabi sysroot directory:
+	target_arch="${arch/#arm-/armv7a-}"
+	for api in $(ls "$arch_dir" | grep -E '^[0-9]+$' | sort -n); do
 		for suffix in clang clang++; do
-			curl -fsSL "https://android.googlesource.com/toolchain/prebuilts/ndk/r27/+/refs/heads/main-kernel/toolchains/llvm/prebuilt/linux-x86_64/bin/${arch}${api}-${suffix}?format=TEXT" | base64 -d > "${arch}${api}-${suffix}"
-			chmod +x "${arch}${api}-${suffix}"
+			printf '#!/usr/bin/env bash\nbin_dir=`dirname "$0"`\nif [ "$1" != "-cc1" ]; then\n    "$bin_dir/%s" --target=%s%s "$@"\nelse\n    # Target is already an argument.\n    "$bin_dir/%s" "$@"\nfi\n' \
+				"${suffix}" "${target_arch}" "${api}" "${suffix}" \
+				> "${target_arch}${api}-${suffix}"
+			chmod +x "${target_arch}${api}-${suffix}"
 		done
 	done
 done
@@ -98,6 +108,9 @@ echo 'int main(void){return 0;}' > "$SMOKE_DIR/test.c"
 "$LLVM_PATH/bin/aarch64-linux-android${MIN_API}-clang" "$SMOKE_DIR/test.c" -o "$SMOKE_DIR/test"
 echo 'int main(){return 0;}' > "$SMOKE_DIR/test.cpp"
 "$LLVM_PATH/bin/aarch64-linux-android${MIN_API}-clang++" -c "$SMOKE_DIR/test.cpp" -o "$SMOKE_DIR/test.o"
+# An empty/broken wrapper exits 0 without producing output, so check
+# that the outputs actually exist:
+test -s "$SMOKE_DIR/test" && test -s "$SMOKE_DIR/test.o"
 rm -rf "$SMOKE_DIR"
 "$LLVM_PATH/bin/clang" --version
 
