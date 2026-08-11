@@ -85,6 +85,11 @@ fi
 # relative to the driver, which the smoke test below verifies.
 echo "Generating API wrappers..."
 cd "${LLVM_PATH}/bin"
+for tool in clang clang++; do
+    curl -fsSL "https://android.googlesource.com/toolchain/prebuilts/ndk/r27/+/refs/heads/main-kernel/toolchains/llvm/prebuilt/linux-x86_64/bin/riscv64-linux-android35-$tool?format=TEXT" |
+        base64 -d > "${LLVM_PATH}/bin/riscv64-linux-android35-$tool"
+    chmod +x "${LLVM_PATH}/bin/riscv64-linux-android35-$tool"
+done
 for arch_dir in "$LLVM_PATH"/sysroot/usr/lib/*-linux-android*; do
 	arch=$(basename "$arch_dir")
 	# The arm wrappers/targets are named armv7a-linux-androideabi,
