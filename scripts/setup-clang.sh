@@ -4,8 +4,8 @@
 
 set -e -u
 
-CLANG_VERSION=clang-r596125
-# clang-r596125 only exists on the main-kernel branch of the AOSP
+CLANG_VERSION=clang-r614150
+# clang-r614150 only exists on the main-kernel branch of the AOSP
 # prebuilts repo, not on main:
 # https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main-kernel/
 CLANG_BRANCH=main-kernel
